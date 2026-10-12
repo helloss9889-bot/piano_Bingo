@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Piano Practice Bingo</title>
+<link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600;700&family=Nunito:wght@500;700;800&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#f3f0ff;--surface:#fff;--ink:#241a4a;--muted:#6a6290;--line:#d9d2f5;--accent:#6b3fd4;--accent-ink:#fff;--gold:#ffbe1f;--pink:#ff5d8f;--ok:#12a594;
+--t1:#ffe3ec;--t2:#dff4ff;--t3:#fff2c7;--t4:#e3f8e9;--t5:#eadfff;
+box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#150f2e;--surface:#211848;--ink:#f1edff;--muted:#a79fd1;--line:#3a2f6b;--accent:#a98bff;--accent-ink:#150f2e;--t1:#4a2140;--t2:#1d3550;--t3:#4a3d16;--t4:#18422f;--t5:#35275f}}
+:root[data-theme="dark"]{--bg:#150f2e;--surface:#211848;--ink:#f1edff;--muted:#a79fd1;--line:#3a2f6b;--accent:#a98bff;--accent-ink:#150f2e;--t1:#4a2140;--t2:#1d3550;--t3:#4a3d16;--t4:#18422f;--t5:#35275f}
+*{box-sizing:border-box}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+body{margin:0;background:var(--bg);color:var(--ink);font:700 17px/1.45 Nunito,system-ui,sans-serif}
+h1,h2,.display{font-family:Fredoka,Nunito,system-ui,sans-serif;font-weight:600;margin:0;line-height:1.1}
+#app{max-width:720px;margin:0 auto;padding:20px 16px 40px}
+button{font:inherit;cursor:pointer;border:0;border-radius:999px;padding:12px 22px;font-weight:800;background:var(--accent);color:var(--accent-ink)}
+button.ghost{background:transparent;color:var(--muted);padding:8px 12px}
+button.alt{background:var(--surface);color:var(--ink);border:2px solid var(--line)}
+button:focus-visible,input:focus-visible,.tile:focus-visible{outline:3px solid var(--gold);outline-offset:2px}
+.top{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:14px}
+h1{font-size:34px}
+.sub{color:var(--muted);margin:2px 0 0}
+.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin:18px 0}
+.tile{position:relative;aspect-ratio:1;border-radius:22px;border:3px solid transparent;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;padding:6px;font-size:clamp(40px,12vw,76px);line-height:1}
+.tile:nth-child(5n+1){background:var(--t1)}.tile:nth-child(5n+2){background:var(--t2)}.tile:nth-child(5n+3){background:var(--t3)}.tile:nth-child(5n+4){background:var(--t4)}.tile:nth-child(5n){background:var(--t5)}
+.tile .lbl{font:800 clamp(11px,2.6vw,14px)/1.15 Nunito,sans-serif;color:var(--ink);text-align:center}
+.tile.done{filter:saturate(.4)}
+.tile.done .em{opacity:.35}
+.tile svg{position:absolute;inset:14%;width:72%;height:72%}
+.tile.win{border-color:var(--gold);box-shadow:0 0 0 4px color-mix(in srgb,var(--gold) 40%,transparent)}
+.banner{background:var(--gold);color:#3a2a00;border-radius:20px;padding:14px 18px;margin:14px 0}
+.banner .display{font-size:26px}
+.bar{height:12px;background:var(--line);border-radius:99px;overflow:hidden}
+.bar>i{display:block;height:100%;background:var(--ok);border-radius:99px}
+.card{background:var(--surface);border:2px solid var(--line);border-radius:24px;padding:20px}
+.head{display:flex;justify-content:space-between;gap:14px;align-items:flex-start}
+.chip{display:inline-block;background:var(--t5);padding:4px 12px;border-radius:99px;font-size:14px;margin-bottom:8px}
+.card h2{font-size:28px}
+.range{font-size:22px;margin:6px 0 0;color:var(--accent)}
+.timer{border:2px solid var(--ink);border-radius:16px;padding:8px 14px;text-align:center;min-width:112px}
+.timer b{display:block;font:600 34px/1 Fredoka,sans-serif;font-variant-numeric:tabular-nums}
+.timer small{color:var(--muted)}
+ul{list-style:none;margin:18px 0 0;padding:0}
+li label{display:flex;align-items:center;gap:14px;padding:12px 4px;border-top:1px solid var(--line);cursor:pointer}
+li:first-child label{border-top:0}
+li input{width:30px;height:30px;flex:none;accent-color:var(--ok)}
+.row{display:flex;gap:10px;flex-wrap:wrap;margin-top:18px;align-items:center}
+.rec{display:flex;flex-direction:column;align-items:center;gap:16px;padding:20px 0}
+.dot{width:110px;height:110px;border-radius:50%;background:var(--pink);border:8px solid var(--surface);box-shadow:0 0 0 4px var(--pink);padding:0}
+.dot.on{animation:pulse 1.2s infinite}
+@keyframes pulse{50%{box-shadow:0 0 0 14px color-mix(in srgb,var(--pink) 35%,transparent)}}
+@media (prefers-reduced-motion:reduce){.dot.on{animation:none}}
+audio{width:100%}
+.note{color:var(--muted);font-size:15px}
+</style>
+</head>
+<body>
+<div id="app"></div>
+<script>
+const TASKS=[
+ {id:'c1',short:'Coucou 39–42',piece:'Le coucou',range:'B.39–42',mins:15,steps:['Are you playing the correct notes?',96,114,132]},
+ {id:'c2',short:'Coucou 56–61',piece:'Le coucou',range:'B.56–61 (up to LH: note D)',mins:15,steps:['Are you playing the correct notes?',96,114,132]},
+ {id:'c3',short:'Coucou 64–end',piece:'Le coucou',range:'B.64–end',mins:15,steps:['Are you playing the correct notes?',96,114,132]},
+ {id:'a1',short:'Adagietto 19–22',piece:'Adagietto',range:'B.19–22',mins:15,steps:['Are you playing the correct notes?',72,88,96]},
+ {id:'a2',short:'Adagietto 25–28',piece:'Adagietto',range:'B.25 (starting on RH C)–28',mins:15,steps:['Are you playing the correct notes?',72,88,96]},
+ {id:'a3',short:'Adagietto 28–30',piece:'Adagietto',range:'B.28–30',mins:15,steps:['Are you playing the correct notes?',72,88,96]},
+ {id:'a4',short:'Adagietto 31–32',piece:'Adagietto',range:'B.31–32',mins:15,steps:['Are you playing the correct notes?',72,88,96]},
+ {id:'m1',short:'Mazurka 17–24',piece:'Mazurka',range:'B.17–24',mins:30,steps:['Make sure to practise the first 4 bars before moving to the next 4 bars',76,88,96]},
+ {id:'m2',short:'Mazurka 25–32',piece:'Mazurka',range:'B.25–32',mins:30,steps:['Make sure to practise the first 4 bars before moving to the next 4 bars',76,88,96]}
+];
+const ICONS=['🎁','🍦','🚀','🦄','⭐','🎈','🍩','🐙','🎁'];
+const LINES=[[0,1,2],[3,4,5],[6,7,8],[0,3,6],[1,4,7],[2,5,8],[0,4,8],[2,4,6]];
+const KEY='piano-bingo-v1';
+let S=load();
+function load(){try{const s=JSON.parse(localStorage.getItem(KEY));if(s&&s.order&&s.order.length===9)return s}catch(e){}
+ const order=TASKS.map(t=>t.id).sort(()=>Math.random()-.5);return{order,done:{},checks:{}}}
+function save(){try{localStorage.setItem(KEY,JSON.stringify(S))}catch(e){}}
+const T=id=>TASKS.find(t=>t.id===id);
+const $=s=>document.querySelector(s);
+const app=$('#app');
+let view='board',cur=null,endAt=0,paused=false,left=0,tick=null,gate=null,gateErr=false;
+let rec=null,chunks=[],blob=null,url=null,recState='idle',recSecs=0,recTick=null,recMsg='',dl=null;
+dl={save:async({filename,data})=>{const u=URL.createObjectURL(data),a=document.createElement('a');a.href=u;a.download=filename;document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(u),4000)}};
+
+function winLines(){return LINES.filter(l=>l.every(i=>S.done[S.order[i]]))}
+function fmt(s){s=Math.max(0,Math.ceil(s));return String(Math.floor(s/60)).padStart(2,'0')+':'+String(s%60).padStart(2,'0')}
+
+function render(){
+ if(view==='board')board();else if(view==='task')task();else record();
+ if(gate){app.insertAdjacentHTML('beforeend',gateHtml());$('#pw').focus()}
+ window.scrollTo(0,0);
+}
+function gateHtml(){return `<div style="position:fixed;inset:0;background:rgba(20,10,50,.6);display:flex;align-items:center;justify-content:center;padding:20px;z-index:9" role="dialog" aria-modal="true" aria-label="Teacher password"><div class="card" style="max-width:360px;width:100%"><h2 style="font-size:24px">Teacher password</h2><p class="sub">Ask your teacher to enter the password.</p><input id="pw" type="password" autocomplete="off" style="width:100%;margin-top:12px;font:inherit;padding:12px 14px;border-radius:14px;border:2px solid var(--line);background:var(--bg);color:var(--ink)">${gateErr?'<p class="note" role="alert" style="color:var(--pink)">That password is not right. Try again.</p>':''}<div class="row"><button id="unlock">Unlock</button><button class="alt" id="cancelgate">Cancel</button></div></div></div>`}
+function abandon(){clearInterval(tick);S.active=null;save();view='board';render()}
+function tickStart(){clearInterval(tick);tick=setInterval(()=>{if(paused)return;left=(endAt-Date.now())/1000;const c=$('#clock');if(c)c.textContent=fmt(left);if(left<=0)timeUp()},250)}
+function board(){
+ const wl=winLines(),wi=new Set(wl.flat()),n=Object.keys(S.done).length;
+ app.innerHTML=`<div class="top"><div><h1>Practice Bingo</h1><p class="sub">Pick an item to reveal your task. Cross off 3 in a row to win a reward!</p></div></div>
+ ${wl.length?`<div class="banner" role="status"><div class="display">Bingo! 🎉</div><div>You crossed off 3 in a row. Show this screen to your teacher to claim your reward.</div></div>`:''}
+ <div class="grid">${S.order.map((id,i)=>{const d=S.done[id];return `<button class="tile${d?' done':''}${wi.has(i)?' win':''}" data-i="${i}" ${d?'disabled':''} aria-label="${d?'Done: '+T(id).short:'Square '+(i+1)+', choose to reveal task'}"><span class="em">${ICONS[i]}</span>${d?`<span class="lbl">${T(id).short}</span><svg viewBox="0 0 100 100" aria-hidden="true"><path d="M12 12L88 88M88 12L12 88" stroke="#ff5d8f" stroke-width="12" stroke-linecap="round"/></svg>`:''}</button>`}).join('')}</div>
+ <div class="bar" aria-hidden="true"><i style="width:${n/9*100}%"></i></div>
+ <p class="sub">${n} of 9 crossed off</p>
+ <div class="row"><button class="ghost" id="reset">Teacher: new card</button></div>`;
+}
+function task(){
+ const t=T(cur),c=S.checks[cur]||(S.checks[cur]=[]);
+ app.innerHTML=`<div class="card"><div class="head"><div><span class="chip">${t.mins} min task</span><h2>Practise ${t.piece}</h2><p class="range">${t.range}</p></div>
+ <div class="timer"><b id="clock">${fmt(left)}</b><small>countdown</small></div></div>
+ <ul>${t.steps.map((s,i)=>`<li><label><input type="checkbox" data-c="${i}" ${c[i]?'checked':''}><span>${typeof s==='number'?`Play with the metronome at ${s} bpm / quaver ♪`:s}</span></label></li>`).join('')}</ul>
+ <div class="row"><button class="alt" id="pause">${paused?'Resume timer':'Pause timer'}</button><button class="ghost" id="skip">Teacher: skip timer</button><button class="ghost" id="back">Teacher: return to card</button></div>
+ <p class="note">Your square is locked in. Finish this task before choosing another one.</p></div>`;
+}
+function record(){
+ const can=!!(navigator.mediaDevices&&window.MediaRecorder);
+ app.innerHTML=`<div class="card"><span class="chip">Time's up!</span><h2>Record what you have practised</h2><p class="sub">${T(cur).piece} · ${T(cur).range}</p>
+ <div class="rec">
+ ${recState==='recorded'?`<audio controls src="${url}"></audio><div class="row"><button id="save" ${dl?'':'hidden'}>Save recording</button><button class="alt" id="again">Record again</button></div>`
+ :`<button class="dot${recState==='recording'?' on':''}" id="recbtn" aria-label="${recState==='recording'?'Stop recording':'Start recording'}"></button><div class="display" id="rt">${recState==='recording'?fmt(recSecs):'Tap to record'}</div>`}
+ ${recMsg?`<p class="note" role="status">${recMsg}</p>`:''}
+ ${can?'':'<p class="note">Recording is not available in this browser. You can still cross off your square.</p>'}
+ </div><div class="row"><button id="finish" ${recState==='recording'?'disabled':''}>Cross off my square</button></div></div>`;
+}
+
+async function startRec(){
+ recMsg='';
+ try{
+  const st=await navigator.mediaDevices.getUserMedia({audio:true});
+  chunks=[];rec=new MediaRecorder(st);
+  rec.ondataavailable=e=>e.data.size&&chunks.push(e.data);
+  rec.onstop=()=>{st.getTracks().forEach(x=>x.stop());blob=new Blob(chunks,{type:rec.mimeType||'audio/webm'});if(url)URL.revokeObjectURL(url);url=URL.createObjectURL(blob);recState='recorded';render()};
+  rec.start();recState='recording';recSecs=0;render();
+  recTick=setInterval(()=>{recSecs++;const e=$('#rt');if(e)e.textContent=fmt(recSecs)},1000);
+ }catch(e){recState='idle';recMsg='Microphone is blocked. Allow microphone access in your browser settings, then tap the red button again.';render()}
+}
+function stopRec(){clearInterval(recTick);if(rec&&rec.state!=='inactive')rec.stop()}
+
+function startTask(id){
+ cur=id;const t=T(id);left=t.mins*60;paused=false;endAt=Date.now()+left*1000;view='task';S.active={id,endAt,paused:false,left,stage:'task'};save();
+ recState='idle';recMsg='';blob=null;
+ clearInterval(tick);tick=setInterval(()=>{
+  if(paused)return;left=(endAt-Date.now())/1000;
+  const c=$('#clock');if(c)c.textContent=fmt(left);
+  if(left<=0)timeUp();
+ },250);
+ render();
+}
+function timeUp(){clearInterval(tick);gate=null;view='record';if(S.active){S.active.stage='record';save()}render()}
+
+app.addEventListener('click',async e=>{
+ const b=e.target.closest('button');if(!b)return;
+ if(b.classList.contains('tile'))return startTask(S.order[+b.dataset.i]);
+ const id=b.id;
+ if(id==='pause'){paused=!paused;if(!paused)endAt=Date.now()+left*1000;b.textContent=paused?'Resume timer':'Pause timer';if(S.active){S.active.paused=paused;S.active.left=left;S.active.endAt=endAt;save()}}
+ else if(id==='back'){gate='back';gateErr=false;render()}
+ else if(id==='skip'){gate='skip';gateErr=false;render()}
+ else if(id==='cancelgate'){gate=null;render()}
+ else if(id==='unlock'){
+  if($('#pw').value.trim().toLowerCase()!=='ateez'){gateErr=true;render();return}
+  const g=gate;gate=null;
+  if(g==='skip')timeUp();
+  else if(g==='back')abandon();
+  else if(g==='reset'){clearInterval(tick);S=(localStorage.removeItem(KEY),load());view='board';render()}
+ }
+ else if(id==='recbtn')recState==='recording'?stopRec():startRec();
+ else if(id==='again'){recState='idle';blob=null;render()}
+ else if(id==='save'&&blob){
+  const ext=/mp4/.test(blob.type)?'mp4':'webm';
+  try{await dl.save({filename:`${T(cur).short.replace(/\s+/g,'-')}-practice.${ext}`,data:blob});recMsg='Saved!'}
+  catch(err){recMsg=err&&err.code==='declined'?'Not saved. Tap Save recording to try again.':'Saving did not work. Try again.'}
+  render();
+ }
+ else if(id==='finish'){S.done[cur]=true;S.active=null;save();view='board';render()}
+ else if(id==='reset'){gate='reset';gateErr=false;render()}
+});
+app.addEventListener('change',e=>{
+ const i=e.target.dataset.c;if(i===undefined)return;
+ (S.checks[cur]||(S.checks[cur]=[]))[+i]=e.target.checked;save();
+});
+app.addEventListener('keydown',e=>{if(e.key==='Enter'&&e.target.id==='pw')$('#unlock').click()});
+(function resume(){
+ const a=S.active;
+ if(!a||!T(a.id)||S.done[a.id]){S.active=null;render();return}
+ cur=a.id;
+ if(a.stage==='record'){view='record';render();return}
+ paused=!!a.paused;endAt=a.endAt;left=paused?a.left:(a.endAt-Date.now())/1000;
+ if(left<=0){timeUp();return}
+ view='task';tickStart();render();
+})();
+</script>
+</body>
+</html>
